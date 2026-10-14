@@ -12,6 +12,7 @@ import {
   CheckCircle2,
   CircleDot,
   Clock3,
+  Database,
   FileCode2,
   Layers3,
   Play,
@@ -330,6 +331,11 @@ export function App() {
           </div>
         </div>
         <div className="topbar-actions">
+          <a className="topbar-flow-link" href="#/flow-records">
+            <Database size={14} />
+            Flow records
+          </a>
+          <a className="topbar-flow-link" href="#/browser-companion">Browser companion</a>
           <ConnectionBadge state={connection} />
           <button
             className="button button-quiet"
@@ -353,6 +359,9 @@ export function App() {
             One operator view for the goal, dynamic route, policy boundary,
             real effect, and independent verification.
           </p>
+          <a className="home-flow-link" href="#/flow-records">
+            Open flow records <ArrowRight size={14} />
+          </a>
         </div>
         <div className="hero-stat" aria-label="Active execution count">
           <span>{executionSummary.active.toString().padStart(2, "0")}</span>

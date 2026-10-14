@@ -1,0 +1,37 @@
+<!doctype html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PANDA Reply</title><link rel="stylesheet" href="popup.css"></head><body>
+<nav><a href="http://127.0.0.1:5173/#/browser-companion" target="_blank" rel="noopener">Open PANDA dashboard</a></nav><header><img class="logo" src="icons/panda-48.png" alt="PANDA logo" width="40" height="40"><div><h1>PANDA Reply</h1><small>Perceptions · Analysis · Network · Decision · Action</small></div></header>
+<details id="highlightPanel"><summary>Keyword highlights · positive / negative</summary>
+<label class="check"><input id="highlightEnabled" type="checkbox"> Enable keyword highlights</label>
+<label class="check"><input id="highlightInstagram" type="checkbox"> Also highlight Instagram (asks for site access)</label>
+<p class="hint">One word, phrase, or /regex/flags per line. Plain words match without case sensitivity, including inside longer words. Regex respects your flags: /bullish|profit/i. Negative matches take priority where colors overlap. Applies to post text; reply editors and DMs are skipped.</p>
+<label for="highlightPositive">Positive · green</label><textarea id="highlightPositive" rows="4" placeholder="PANDA&#10;good news&#10;/bullish|profit/i"></textarea>
+<label for="highlightNegative">Negative · red</label><textarea id="highlightNegative" rows="4" placeholder="scam&#10;rug pull&#10;/bearish|loss(?:es)?/i"></textarea>
+<button id="highlightSave">Save highlights</button><div id="highlightStatus" role="status" aria-live="polite"></div>
+</details>
+<details id="recordingPanel"><summary>Browse recorder · X / Instagram</summary>
+<p class="hint">Save visible posts as you browse: text, authors, post links and available media URLs. Stored locally; recordings are not sent to OpenAI. DMs, login and settings pages are skipped. This does not record screen video or download media files.</p>
+<label class="check"><input id="recordInstagram" type="checkbox"> Include Instagram (asks for site access)</label>
+<div class="actions"><button id="recordStart">Start recording</button><button id="recordStop" disabled>Stop</button></div>
+<div id="recordingStatus" role="status" aria-live="polite">Not recording.</div>
+<label for="recordingSession">Saved recording</label><select id="recordingSession"></select>
+<div class="actions"><button id="recordJSON" disabled>Download JSON</button><button id="recordHTML" disabled>Download HTML</button></div>
+</details>
+<label for="instructions">Reply instructions</label><textarea id="instructions" rows="3" placeholder="Example: Give one ticker and make a concise, credible case for it."></textarea>
+<label for="custom">Your key point (optional)</label><textarea id="custom" rows="2" placeholder="A ticker, fact, or perspective you want included"></textarea>
+<div class="line"><label for="tone">Tone</label><select id="tone"><option value="friendly">Friendly</option><option value="professional">Professional</option><option value="enthusiastic">Enthusiastic</option><option value="direct">Direct</option></select></div>
+<details id="settings"><summary>OpenAI API settings</summary><label for="apiKey">OpenAI API key</label><input id="apiKey" type="password" autocomplete="off" placeholder="sk-…"><p class="hint" id="keySaved">Your key is saved automatically in Chrome on this device, including after reloading the extension panel.</p><p class="hint">The extension sends the post, up to five other visible posts on the post page, your selected follower response, and instructions to OpenAI to draft the reply. Without an API key, it cannot generate an AI reply. An OpenAI API account may incur usage charges.</p><label class="check"><input id="runtime" type="checkbox"> Optional: save draft to PANDA Flow records</label><label for="pandaToken">PANDA bearer token (if enabled)</label><input id="pandaToken" type="password" autocomplete="off"><p class="hint">Saved locally in Chrome. Optional logging sends the source post and generated draft to the local daemon. View saved drafts in the dashboard’s Flow records.</p></details>
+<section id="networkSection">
+<label class="check"><input id="networkEnabled" type="checkbox"> Network: ask one of my followers by DM</label>
+<p class="hint">When enabled, Generate visits your followers and sends one message about this post to the first available follower with a Message button. Their response will inform Decision and Action. The question includes the post and explains that their answer may inform a public reply.</p>
+<div id="networkControls" hidden>
+<div id="networkStatus" role="status" aria-live="polite">No follower contacted for this post yet.</div>
+<div class="actions"><button id="askFollower">Ask a follower</button><button id="openNetwork" disabled>Open DM tab</button><button id="refreshNetwork" disabled>Check messages</button></div>
+<label for="networkMessages">Messages after the question</label><select id="networkMessages"><option value="">Check messages, then choose the follower’s response</option></select>
+<label for="networkResponse">Follower’s actual response</label><textarea id="networkResponse" rows="3" maxlength="4000" placeholder="Select their message above or paste their reply here if X Chat cannot be read."></textarea>
+<p class="hint">Incoming replies resume the saved transaction automatically when X exposes the matching conversation. If automatic detection is unavailable, confirm the follower’s response here. The selected text is sent to OpenAI to inform the draft.</p>
+<button id="useNetworkResponse" disabled>Use follower response and generate</button>
+</div><details><summary>Network transactions</summary><p class="hint">Saved requests continue when a follower replies. Open their DM to check for returns. Ready drafts wait for your review; public replies are never posted automatically. Turning the toggle off stops new requests; use Stop transaction to end a saved request.</p><div id="networkTransactions"></div></details></section>
+<div class="actions"><button id="analyze">Generate reply</button><button id="insert" disabled>Insert reply</button></div>
+<div id="status" role="status" aria-live="polite"></div>
+<section id="analysisSection" hidden><h2>Generated staged reply</h2><textarea id="draft" rows="5" maxlength="280" placeholder="Perceptions → Analysis → Network → Decision → Action"></textarea><div class="actions"><button id="copy">Copy reply</button></div><details><summary>Analysis details</summary><div id="analysis" class="result"></div></details></section>
+<details><summary>Reply history</summary><p class="hint">Prepared replies block repeat generation and insertion. Publication on X is unconfirmed. Mark posts you commented on manually. Remove an entry only if you need to retry.</p><button id="markCommented">Mark current post commented</button><div id="historyList"></div></details><footer>Only one post at a time. You review and publish manually; no automatic public posting. Follower DMs are sent only with Network enabled.</footer><script src="highlight-patterns.js"></script><script src="highlight-ui.js"></script><script src="recorder-store.js"></script><script src="recorder-ui.js"></script><script src="post-reader.js"></script><script src="reply-engine.js"></script><script src="network.js"></script><script src="panda-audit.js"></script><script src="popup.js"></script></body></html>

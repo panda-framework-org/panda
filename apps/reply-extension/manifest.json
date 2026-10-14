@@ -1,0 +1,57 @@
+{
+  "manifest_version": 3,
+  "name": "PANDA Reply Assistant",
+  "version": "1.7.0",
+  "description": "Generate contextual X replies using OpenAI, with optional local PANDA audit logging and manual approval.",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage",
+    "sidePanel",
+    "alarms",
+    "offscreen"
+  ],
+  "host_permissions": [
+    "https://api.openai.com/*",
+    "http://127.0.0.1:4317/*",
+    "https://x.com/*",
+    "https://twitter.com/*"
+  ],
+  "action": {
+    "default_title": "PANDA Reply",
+    "default_icon": {
+      "16": "icons/panda-16.png",
+      "32": "icons/panda-32.png",
+      "48": "icons/panda-48.png"
+    }
+  },
+  "minimum_chrome_version": "116",
+  "background": {
+    "service_worker": "background.js"
+  },
+  "side_panel": {
+    "default_path": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://x.com/*",
+        "https://twitter.com/*"
+      ],
+      "js": [
+        "network-observer.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "optional_host_permissions": [
+    "https://www.instagram.com/*",
+    "https://instagram.com/*"
+  ],
+  "icons": {
+    "16": "icons/panda-16.png",
+    "32": "icons/panda-32.png",
+    "48": "icons/panda-48.png",
+    "128": "icons/panda-128.png"
+  }
+}

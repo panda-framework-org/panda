@@ -29,7 +29,7 @@ The current executable development baseline remains intentionally narrow:
 | --- | --- |
 | Capabilities | Perception, Analysis, Network, Decision, and Action |
 | Routing | Each capability returns a typed `NextStep`; policy permits or denies the proposed transition |
-| State | Goal, Execution, and trace state is isolated by execution ID and retained in versioned local files by default |
+| State | Goal, Execution, and trace state is isolated by execution ID and retained in versioned local files; Flow Records use SQLite |
 | Effect | One relative-path UTF-8 filesystem write inside a per-execution workspace |
 | Verification | A separate observer reads the environment before Analysis can mark the Goal achieved |
 | Trace | Material records are stored append-only with per-execution sequence, correlation, and causation |
@@ -100,7 +100,8 @@ export only the values required by the process. Never print or commit populated
 It is ignored secret material: do not commit, paste, log, or share it. Avoid
 `pnpm generate:wallets` unless you explicitly intend to create credentials.
 The default `.panda/` directory is also ignored because persisted JSON traces
-contain request content and evidence in plaintext.
+and the `panda.sqlite` Flow Records database contain user-authored content and
+evidence in plaintext.
 
 ## 4. Run the local stack
 
@@ -111,6 +112,7 @@ pnpm dev
 - Daemon HTTP API: `http://127.0.0.1:4317`
 - Daemon WebSocket: `ws://127.0.0.1:4317/events`
 - Dashboard: `http://127.0.0.1:5173`
+- Flow Records: `http://127.0.0.1:5173/#/flow-records`
 
 In another terminal:
 
@@ -166,6 +168,12 @@ replay unless its Goal was already terminal, in which case the matching
 Execution outcome is finalized. Memory mode intentionally starts empty after
 every restart.
 
+Flow Records use `GET`, `POST`, `PUT`, and `DELETE` routes below
+`/flow-records`. They are stored in `.panda/panda.sqlite` by the Fastify daemon
+and remain durable independently of the execution persistence mode. The React
+page automatically imports valid records from the retired
+`panda.flow-records.v1` local-storage key before removing that browser copy.
+
 ## 5. Repository map
 
 ```text
@@ -196,8 +204,8 @@ output.
 | --- | --- | --- |
 | `@panda/shared` | `packages/shared/src/index.ts` | Canonical domain and trace contracts, constructors, identities, time, events, and logging |
 | `@panda/core` | `packages/core/src/index.ts` | Goal/Execution stores, capability registry and coordinator, policies, deterministic capabilities, Action connector, and effect observer |
-| `@panda/sdk` | `packages/sdk/src/index.ts` | Typed Fetch client for health and execution create/list/detail/trace endpoints with structured errors |
-| `@panda/daemon` | `apps/daemon/src/index.ts` | One canonical component graph, local state, HTTP API, and WebSocket trace fan-out |
+| `@panda/sdk` | `packages/sdk/src/index.ts` | Typed Fetch client for health, execution, and Flow Record CRUD endpoints with structured errors |
+| `@panda/daemon` | `apps/daemon/src/index.ts` | One canonical component graph, local state, SQLite Flow Records, HTTP API, and WebSocket trace fan-out |
 | `@panda/cli` | `apps/cli/src/index.ts` | Initialization, local process launchers, health, and version output |
 | `@panda/dashboard` | `apps/dashboard/src/App.tsx` | Request form, execution list/detail, Goal criteria, operator brief, and causal trace timeline |
 

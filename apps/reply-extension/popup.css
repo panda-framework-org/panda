@@ -1,0 +1,12 @@
+*{box-sizing:border-box}body{width:100%;padding:18px;margin:0;font:13px/1.45 system-ui,-apple-system,sans-serif;background:#101715;color:#edf6f0}header{display:flex;align-items:center;gap:12px;margin-bottom:20px}.logo{font-size:32px}h1{font-size:19px;margin:0}small{color:#9ab4a4;font-size:10px}label{display:block;margin:12px 0 6px;font-weight:600}textarea,select{background:#1c2822;border:1px solid #45634e;border-radius:8px;color:white;width:100%;padding:10px;font:inherit;resize:vertical}textarea:focus,select:focus{outline:2px solid #5dbe7d}.line{display:flex;align-items:center;gap:10px}.line select{width:55%;margin-left:auto}.check{font-weight:400;display:flex;align-items:center;gap:8px}.actions{display:flex;gap:8px;margin:15px 0}button{border:0;border-radius:8px;background:#7ae49c;color:#102116;padding:10px 12px;font-weight:750;cursor:pointer}button:disabled{opacity:.4;cursor:default}#insert{background:#e1e9e2}#status{min-height:19px;color:#aad9ba;white-space:pre-wrap}h2{font-size:13px;margin:14px 0 7px}.result{border:1px solid #365243;border-radius:9px;padding:11px;background:#1a2920;white-space:pre-wrap;max-height:210px;overflow:auto;color:#d4e7d9}#copy{margin-top:8px}footer{color:#9ab4a4;border-top:1px solid #2d4635;padding-top:11px;margin-top:18px;font-size:11px}
+input[type="password"]{background:#1c2822;border:1px solid #45634e;border-radius:8px;color:white;width:100%;padding:10px;font:inherit}details{margin:10px 0}summary{cursor:pointer;color:#b8ebc6;font-weight:650}.hint{color:#b0c4b6;font-size:11px}#settings{border-top:1px solid #2d4635;padding-top:8px}
+
+#historyList>div{display:flex;align-items:center;gap:8px;margin:12px 0}#historyList a{color:#b8ebc6;flex:1;overflow-wrap:anywhere}#historyList button{padding:6px}
+
+#networkSection{border-top:1px solid #2d4635;border-bottom:1px solid #2d4635;margin-top:16px;padding-bottom:12px}#networkStatus{color:#aad9ba;white-space:pre-wrap}#networkControls .actions{flex-wrap:wrap}
+
+.transaction{border-top:1px solid #2d4635;padding:8px 0}.transaction p{overflow-wrap:anywhere}.transaction .actions{flex-wrap:wrap}
+
+#recordingPanel{border:1px solid #365243;border-radius:9px;padding:12px}#recordingPanel .actions{flex-wrap:wrap}#recordingStatus{color:#aad9ba;white-space:pre-wrap}
+
+#highlightPanel{border:1px solid #365243;border-radius:9px;padding:12px}#highlightStatus{white-space:pre-wrap;color:#aad9ba;margin-top:10px}label[for="highlightPositive"]{color:#91efac}label[for="highlightNegative"]{color:#ff9aa7}

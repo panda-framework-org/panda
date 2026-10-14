@@ -526,6 +526,28 @@ export interface PandaExecutionView {
   readonly traceUrl: string;
 }
 
+export interface FlowRecordFields {
+  readonly title: string;
+  readonly perception: string;
+  readonly analysis: string;
+  readonly network: string;
+  readonly decision: string;
+  readonly action: string;
+}
+
+export interface FlowRecord extends FlowRecordFields {
+  readonly id: string;
+  readonly createdAt: string;
+  readonly updatedAt: string;
+}
+
+export type FlowRecordCreateInput = FlowRecordFields;
+export type FlowRecordUpdateInput = FlowRecordFields;
+
+export interface FlowRecordImportInput {
+  readonly records: readonly FlowRecord[];
+}
+
 export type PandaApiAuthenticationMode = "none" | "bearer";
 
 export interface PandaHealthResponse {
@@ -533,6 +555,7 @@ export interface PandaHealthResponse {
   readonly name: string;
   readonly version: string;
   readonly persistence: "file" | "memory";
+  readonly flowRecordsPersistence: "sqlite";
   readonly authentication: PandaApiAuthenticationMode;
 }
 

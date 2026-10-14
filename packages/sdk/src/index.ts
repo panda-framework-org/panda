@@ -1,4 +1,7 @@
 import type {
+  FlowRecord,
+  FlowRecordCreateInput,
+  FlowRecordUpdateInput,
   PandaApiErrorDetail,
   PandaApiErrorResponse,
   PandaExecutionCreateInput,
@@ -9,6 +12,9 @@ import type {
 
 export type {
   Assessment,
+  FlowRecord,
+  FlowRecordCreateInput,
+  FlowRecordUpdateInput,
   Goal,
   Outcome,
   PandaApiErrorDetail,
@@ -77,6 +83,40 @@ export class PandaClient {
     );
   }
 
+  async listFlowRecords() {
+    return this.request<FlowRecord[]>("/flow-records");
+  }
+
+  async createFlowRecord(input: FlowRecordCreateInput) {
+    return this.request<FlowRecord>("/flow-records", {
+      method: "POST",
+      body: JSON.stringify(input),
+    });
+  }
+
+  async updateFlowRecord(id: string, input: FlowRecordUpdateInput) {
+    return this.request<FlowRecord>(
+      `/flow-records/${encodeURIComponent(id)}`,
+      {
+        method: "PUT",
+        body: JSON.stringify(input),
+      },
+    );
+  }
+
+  async deleteFlowRecord(id: string) {
+    return this.request<void>(`/flow-records/${encodeURIComponent(id)}`, {
+      method: "DELETE",
+    });
+  }
+
+  async importFlowRecords(records: readonly FlowRecord[]) {
+    return this.request<FlowRecord[]>("/flow-records/import", {
+      method: "POST",
+      body: JSON.stringify({ records }),
+    });
+  }
+
   private async request<T>(path: string, init: RequestInit = {}): Promise<T> {
     const headers = new Headers(init.headers);
     headers.set("content-type", "application/json");
@@ -92,6 +132,8 @@ export class PandaClient {
       const body = await readError(response);
       throw new PandaRequestError(response.status, body.error);
     }
+
+    if (response.status === 204) return undefined as T;
 
     return (await response.json()) as T;
   }

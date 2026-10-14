@@ -4,6 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
 import type {
+  FlowRecord,
   PandaApiErrorResponse,
   PandaEvent,
   PandaExecutionView,
@@ -73,6 +74,86 @@ test("API-created execution succeeds and exposes the authoritative trace", async
   assert.equal(
     (trace.json<TraceRecord[]>().at(-1)?.payload as { outcome?: string }).outcome,
     "succeeded",
+  );
+});
+
+test("flow-record API persists validated CRUD and legacy imports in SQLite", async (context) => {
+  const { app } = await withDaemon(context);
+  const payload = {
+    title: "Investigate login issue",
+    perception: "Customers cannot sign in.",
+    analysis: "The identity provider is timing out.",
+    network: "Web app, API, and identity provider.",
+    decision: "Fail over to the secondary provider.",
+    action: "Enable the failover and monitor authentication.",
+  };
+  const createdResponse = await app.inject({
+    method: "POST",
+    url: "/flow-records",
+    payload,
+  });
+
+  assert.equal(createdResponse.statusCode, 201);
+  const created = createdResponse.json<FlowRecord>();
+  assert.equal(created.title, payload.title);
+  assert.equal(created.createdAt, created.updatedAt);
+  assert.deepEqual(
+    (await app.inject({ method: "GET", url: "/flow-records" })).json(),
+    [created],
+  );
+
+  const updatedResponse = await app.inject({
+    method: "PUT",
+    url: `/flow-records/${created.id}`,
+    payload: { ...payload, action: "Failover enabled." },
+  });
+  assert.equal(updatedResponse.statusCode, 200);
+  assert.equal(updatedResponse.json<FlowRecord>().action, "Failover enabled.");
+
+  const legacy: FlowRecord = {
+    id: "flow-legacy-api",
+    ...payload,
+    title: "Imported browser record",
+    createdAt: "2026-08-25T10:00:00.000Z",
+    updatedAt: "2026-08-25T10:30:00.000Z",
+  };
+  const importedResponse = await app.inject({
+    method: "POST",
+    url: "/flow-records/import",
+    payload: { records: [legacy, legacy] },
+  });
+  assert.equal(importedResponse.statusCode, 200);
+  assert.equal(
+    importedResponse
+      .json<FlowRecord[]>()
+      .filter((record) => record.id === legacy.id).length,
+    1,
+  );
+
+  const invalid = await app.inject({
+    method: "POST",
+    url: "/flow-records",
+    payload: { ...payload, decision: "" },
+  });
+  assert.equal(invalid.statusCode, 400);
+  assert.equal(
+    invalid.json<PandaApiErrorResponse>().error.code,
+    "INVALID_FLOW_RECORD_INPUT",
+  );
+
+  const deleted = await app.inject({
+    method: "DELETE",
+    url: `/flow-records/${created.id}`,
+  });
+  assert.equal(deleted.statusCode, 204);
+  const missing = await app.inject({
+    method: "GET",
+    url: `/flow-records/${created.id}`,
+  });
+  assert.equal(missing.statusCode, 404);
+  assert.equal(
+    missing.json<PandaApiErrorResponse>().error.code,
+    "FLOW_RECORD_NOT_FOUND",
   );
 });
 

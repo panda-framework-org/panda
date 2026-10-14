@@ -113,6 +113,12 @@ pnpm dev
 The daemon listens at `http://127.0.0.1:4317` and the dashboard at
 `http://127.0.0.1:5173` by default.
 
+The dashboard's Flow Records workspace is available at
+`http://127.0.0.1:5173/#/flow-records`. Its CRUD API is implemented by the
+existing Fastify daemon and stored in SQLite, so records survive browser
+storage clearing and server restarts. On first load, the page imports records
+from the legacy `panda.flow-records.v1` browser-storage key into SQLite.
+
 Create and independently verify a sandboxed file:
 
 ```bash
@@ -131,6 +137,11 @@ is available through:
 - `GET /executions`
 - `GET /executions/:id`
 - `GET /executions/:id/trace`
+- `GET /flow-records`
+- `POST /flow-records`
+- `GET /flow-records/:id`
+- `PUT /flow-records/:id`
+- `DELETE /flow-records/:id`
 - `WS /events`
 
 Without `PANDA_API_TOKEN`, the server runs only as the explicit `panda-local`
@@ -154,11 +165,31 @@ client uses different origins. The included dashboard does not yet provide an
 authenticated-mode sign-in or token entry.
 
 By default, canonical Execution/trace and Goal snapshots are stored below
-`.panda/state`; effect workspaces remain below `.panda/runs`. Completed and
-waiting work survives a daemon restart. Active work with a terminal Goal is
-finalized to that outcome; other work interrupted while `pending` or `running`
-is failed explicitly with `PROCESS_RESTART_INTERRUPTED`. Neither path replays
-Action. Set `PANDA_PERSISTENCE=memory` only when ephemeral state is intentional.
+`.panda/state`, Flow Records are stored in `.panda/panda.sqlite`, and effect
+workspaces remain below `.panda/runs`. Completed and waiting work survives a
+daemon restart. Active work with a terminal Goal is finalized to that outcome;
+other work interrupted while `pending` or `running` is failed explicitly with
+`PROCESS_RESTART_INTERRUPTED`. Neither path replays Action. Set
+`PANDA_PERSISTENCE=memory` only when ephemeral execution state is intentional;
+Flow Records remain SQLite-backed.
+
+## Browser companion
+
+The bundled [PANDA Reply Assistant](./apps/reply-extension/README.md) adds X
+reply drafting, persistent follower consultations, duplicate reply protection,
+X/Instagram browse recording with JSON/HTML exports, and keyword highlights.
+Open `http://127.0.0.1:5173/#/browser-companion` for setup and feature details.
+Load `apps/reply-extension` as an unpacked extension in Chrome, then click its
+PANDA toolbar icon on X. Browser features run in the extension side panel.
+
+Optional **save draft to PANDA Flow records** writes source context and the
+prepared reply through the existing daemon `/flow-records` API. View these
+records at `#/flow-records`. Set the companion's PANDA bearer token when daemon
+authentication is enabled. Draft records do not claim a reply was published.
+The companion's OpenAI calls and browser automation are separate from the
+core coordinator; the core runtime's supported effects remain unchanged.
+
+Run companion checks with `pnpm --filter @panda/reply-extension test`.
 
 ## SDK example
 

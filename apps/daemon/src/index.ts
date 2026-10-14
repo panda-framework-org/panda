@@ -13,6 +13,7 @@ import {
 export * from "./execution-runtime.js";
 export * from "./server.js";
 export * from "./api-security.js";
+export * from "./flow-record-store.js";
 
 const isMain =
   process.argv[1] !== undefined &&

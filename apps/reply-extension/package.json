@@ -1,0 +1,10 @@
+{
+  "name": "@panda/reply-extension",
+  "version": "1.7.0",
+  "private": true,
+  "scripts": {
+    "test": "node --test tests/*.test.cjs",
+    "build": "node scripts/validate.cjs",
+    "typecheck": "node scripts/validate.cjs"
+  }
+}

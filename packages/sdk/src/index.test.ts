@@ -50,6 +50,54 @@ test("posts the typed execution request", async (context) => {
   });
 });
 
+test("uses the flow-record CRUD and import endpoints", async (context) => {
+  const requests: Array<{ url: string; init?: RequestInit }> = [];
+  context.mock.method(globalThis, "fetch", async (
+    url: Parameters<typeof fetch>[0],
+    init?: Parameters<typeof fetch>[1],
+  ) => {
+    requests.push({ url: String(url), init });
+    return init?.method === "DELETE"
+      ? new Response(undefined, { status: 204 })
+      : Response.json([]);
+  });
+  const client = new PandaClient({ baseUrl: "http://daemon.test" });
+  const fields = {
+    title: "Flow",
+    perception: "Observed",
+    analysis: "Analyzed",
+    network: "Connected",
+    decision: "Decided",
+    action: "Acted",
+  };
+  const record = {
+    id: "flow-1",
+    ...fields,
+    createdAt: "2026-08-28T10:00:00.000Z",
+    updatedAt: "2026-08-28T10:00:00.000Z",
+  };
+
+  await client.listFlowRecords();
+  await client.createFlowRecord(fields);
+  await client.updateFlowRecord("flow/with space", fields);
+  await client.deleteFlowRecord("flow/with space");
+  await client.importFlowRecords([record]);
+
+  assert.deepEqual(
+    requests.map(({ url, init }) => [url, init?.method ?? "GET"]),
+    [
+      ["http://daemon.test/flow-records", "GET"],
+      ["http://daemon.test/flow-records", "POST"],
+      ["http://daemon.test/flow-records/flow%2Fwith%20space", "PUT"],
+      ["http://daemon.test/flow-records/flow%2Fwith%20space", "DELETE"],
+      ["http://daemon.test/flow-records/import", "POST"],
+    ],
+  );
+  assert.deepEqual(JSON.parse(String(requests.at(-1)?.init?.body)), {
+    records: [record],
+  });
+});
+
 test(
   "sends a configured bearer token without adding it to request bodies",
   async (context) => {
